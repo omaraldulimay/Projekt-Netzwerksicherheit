@@ -48,6 +48,7 @@ public class NetworkMonitor {
         // Wenn die Verbindungsanzahl für diese IP das Limit überschreitet, wird eine Warnung ausgegeben
         if (connectionCounts.get(clientIP) > MAX_CONNECTIONS_PER_IP) {
             System.out.println("Möglicher Port-Scan von IP erkannt: " + clientIP);
+            blockSuspiciousIP(clientIP);
         }
 
         // Aktualisiert die Ports, zu denen diese IP Verbindungen herstellt
@@ -59,6 +60,7 @@ public class NetworkMonitor {
         // Wenn die Anzahl der Ports, zu denen diese IP Verbindungen herstellt, das Limit überschreitet, wird eine Warnung ausgegeben
         if (connectionPorts.get(clientIP).size() > MAX_CONNECTIONS_PER_IP) {
             System.out.println("Möglicher Port-Scan von IP erkannt: " + clientIP);
+            blockSuspiciousIP(clientIP);
         }
     }
 
@@ -95,6 +97,13 @@ public class NetworkMonitor {
                 blockSuspiciousIP(clientIP);
                 break;
             }
+        }
+    }
+
+    private void detectDoSAttack(String clientIP) {
+        if (requestTimestamps.get(clientIP).size() > MAX_REQUESTS_PER_MINUTE) {
+            System.out.println("Möglicher DoS-Angriff von IP erkannt: " + clientIP);
+            blockSuspiciousIP(clientIP);
         }
     }
 
@@ -156,6 +165,7 @@ public class NetworkMonitor {
 
                     scanMessageForKeywords(line, clientIP);
                     detectSignatureBasedAttack(line, clientIP);
+                    detectDoSAttack(clientIP);
 
                     // Überprüft, ob die IP-Adresse des Clients blockiert ist
                     if (blockedIPs.contains(clientIP)) {
