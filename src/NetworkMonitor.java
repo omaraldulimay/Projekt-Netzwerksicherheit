@@ -61,6 +61,29 @@ public class NetworkMonitor {
         }
     }
 
+    private void monitorRequestPatterns(String clientIP) {
+        // Aktualisiert die Zeitstempel der Anfragen für diese IP
+        if (!requestTimestamps.containsKey(clientIP)) {
+            requestTimestamps.put(clientIP, new LinkedList<>());
+        }
+        requestTimestamps.get(clientIP).add(System.currentTimeMillis());
+
+        // Entfernt die Zeitstempel, die älter als eine Minute sind
+        LinkedList<Long> timestamps = requestTimestamps.get(clientIP);
+        if (timestamps != null && !timestamps.isEmpty() && timestamps.peek() < System.currentTimeMillis() - 60000) {
+            timestamps.remove();
+        }
+
+        // Wenn die Anzahl der Anfragen pro Minute für diese IP das Limit überschreitet, wird eine Warnung ausgegeben
+        if (requestTimestamps.get(clientIP).size() > MAX_REQUESTS_PER_MINUTE) {
+            System.out.println("Möglicher DoS-Angriff von IP erkannt: " + clientIP);
+        }
+    }
+
+    private void blockIP(String clientIP) {
+        blockedIPs.add(clientIP);
+    }
+
     public static void main(String[] args) {
         boolean running = true;
         SSLServerSocket serverSocket;
@@ -86,23 +109,7 @@ public class NetworkMonitor {
                 int clientPort = socket.getPort();
 
                 detectPortScanning(clientIP, clientPort);
-
-                // Aktualisiert die Zeitstempel der Anfragen für diese IP
-                if (!requestTimestamps.containsKey(clientIP)) {
-                    requestTimestamps.put(clientIP, new LinkedList<>());
-                }
-                requestTimestamps.get(clientIP).add(System.currentTimeMillis());
-
-                // Entfernt die Zeitstempel, die älter als eine Minute sind
-                LinkedList<Long> timestamps = requestTimestamps.get(clientIP);
-                if (timestamps != null && !timestamps.isEmpty() && timestamps.peek() < System.currentTimeMillis() - 60000) {
-                    timestamps.remove();
-                }
-
-                // Wenn die Anzahl der Anfragen pro Minute für diese IP das Limit überschreitet, wird eine Warnung ausgegeben
-                if (requestTimestamps.get(clientIP).size() > MAX_REQUESTS_PER_MINUTE) {
-                    System.out.println("Möglicher DoS-Angriff von IP erkannt: " + clientIP);
-                }
+                monitorRequestPatterns(clientIP);
 
                 System.out.println("Neuer Client verbunden");
 
@@ -117,7 +124,7 @@ public class NetworkMonitor {
                     for (String keyword : SUSPICIOUS_CONTENT_KEYWORDS) {
                         if (line.toLowerCase().contains(keyword)) {
                             System.out.println("Verdächtiger Paketinhalt von IP erkannt: " + clientIP);
-                            blockedIPs.add(clientIP); // Blockieren Sie die IP-Adresse des Angreifers
+                            blockIP(clientIP); // Blockieren Sie die IP-Adresse des Angreifers
                             break;
                         }
                     }
