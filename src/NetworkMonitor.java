@@ -61,6 +61,21 @@ public class NetworkMonitor {
         }
     }
 
+    private void blockSuspiciousIP(String clientIP) {
+        blockedIPs.add(clientIP);
+        System.out.println("IP-Adresse blockiert: " + clientIP);
+    }
+
+    private void scanMessageForKeywords(String message, String clientIP) {
+        for (String keyword : SUSPICIOUS_CONTENT_KEYWORDS) {
+            if (message.toLowerCase().contains(keyword)) {
+                System.out.println("Verdächtiger Paketinhalt von IP erkannt: " + clientIP);
+                blockSuspiciousIP(clientIP);
+                break;
+            }
+        }
+    }
+
     public static void main(String[] args) {
         boolean running = true;
         SSLServerSocket serverSocket;
@@ -102,6 +117,7 @@ public class NetworkMonitor {
                 // Wenn die Anzahl der Anfragen pro Minute für diese IP das Limit überschreitet, wird eine Warnung ausgegeben
                 if (requestTimestamps.get(clientIP).size() > MAX_REQUESTS_PER_MINUTE) {
                     System.out.println("Möglicher DoS-Angriff von IP erkannt: " + clientIP);
+                    blockSuspiciousIP(clientIP);
                 }
 
                 System.out.println("Neuer Client verbunden");
@@ -113,14 +129,7 @@ public class NetworkMonitor {
                 while ((line = reader.readLine()) != null) {
                     System.out.println("Empfangen: " + line);
 
-                    // Überprüft, ob der Inhalt der Nachricht verdächtige Schlüsselwörter enthält
-                    for (String keyword : SUSPICIOUS_CONTENT_KEYWORDS) {
-                        if (line.toLowerCase().contains(keyword)) {
-                            System.out.println("Verdächtiger Paketinhalt von IP erkannt: " + clientIP);
-                            blockedIPs.add(clientIP); // Blockieren Sie die IP-Adresse des Angreifers
-                            break;
-                        }
-                    }
+                    scanMessageForKeywords(line, clientIP);
 
                     // Überprüft, ob die IP-Adresse des Clients blockiert ist
                     if (blockedIPs.contains(clientIP)) {
