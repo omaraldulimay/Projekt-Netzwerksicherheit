@@ -1,4 +1,3 @@
-
 import java.io.*;
 import java.util.*;
 import javax.net.ssl.*;
@@ -35,57 +34,58 @@ public class NetworkMonitor {
         return "admin".equals(username) && "password".equals(password);
     }
 
+    private void detectPortScanning(String clientIP, int clientPort) {
+        // Überprüft ob, die IP-Adresse des Clients geändert wurde, was auf IP-Spoofing hinweisen könnte
+        if (previousIPs.containsKey(clientIP) && !previousIPs.get(clientIP).equals(clientIP)) {
+            System.out.println("Möglicher IP-Spoofing-Angriff von IP erkannt: " + clientIP);
+        }
+        previousIPs.put(clientIP, clientIP);
 
+        // Aktualisiert die Verbindungsanzahl für diese IP
+        connectionCounts.put(clientIP, connectionCounts.getOrDefault(clientIP, 0) + 1);
+
+        // Wenn die Verbindungsanzahl für diese IP das Limit überschreitet, wird eine Warnung ausgegeben
+        if (connectionCounts.get(clientIP) > MAX_CONNECTIONS_PER_IP) {
+            System.out.println("Möglicher Port-Scan von IP erkannt: " + clientIP);
+        }
+
+        // Aktualisiert die Ports, zu denen diese IP Verbindungen herstellt
+        if (!connectionPorts.containsKey(clientIP)) {
+            connectionPorts.put(clientIP, new HashSet<>());
+        }
+        connectionPorts.get(clientIP).add(clientPort);
+
+        // Wenn die Anzahl der Ports, zu denen diese IP Verbindungen herstellt, das Limit überschreitet, wird eine Warnung ausgegeben
+        if (connectionPorts.get(clientIP).size() > MAX_CONNECTIONS_PER_IP) {
+            System.out.println("Möglicher Port-Scan von IP erkannt: " + clientIP);
+        }
+    }
 
     public static void main(String[] args) {
         boolean running = true;
         SSLServerSocket serverSocket;
 
+        try {
+            SSLServerSocketFactory sslServerSocketFactory = (SSLServerSocketFactory) SSLServerSocketFactory.getDefault();
+            serverSocket = (SSLServerSocket) sslServerSocketFactory.createServerSocket(4999);
+            String[] supportedCipherSuites = serverSocket.getSupportedCipherSuites();
+            serverSocket.setEnabledCipherSuites(supportedCipherSuites);
+            serverSocket.setEnabledProtocols(new String[] {"TLSv1.2"}); // Specify the SSL/TLS protocol
+            serverSocket.setEnabledCipherSuites(serverSocket.getSupportedCipherSuites()); // Enable all supported cipher suites
+            serverSocket.setNeedClientAuth(false); // Optional: erfordert eine Authentifizierung des Clients
 
+            System.out.println("Server hört auf Port 4999");
+        } catch (IOException e) {
+            System.out.println("Fehler beim Erstellen des SSL Server Sockets: " + e.getMessage());
+            return;
+        }
+        while (running) {
             try {
-                SSLServerSocketFactory sslServerSocketFactory = (SSLServerSocketFactory) SSLServerSocketFactory.getDefault();
-                serverSocket = (SSLServerSocket) sslServerSocketFactory.createServerSocket(4999);
-                String[] supportedCipherSuites = serverSocket.getSupportedCipherSuites();
-                serverSocket.setEnabledCipherSuites(supportedCipherSuites);
-                serverSocket.setEnabledProtocols(new String[] {"TLSv1.2"}); // Specify the SSL/TLS protocol
-                serverSocket.setEnabledCipherSuites(serverSocket.getSupportedCipherSuites()); // Enable all supported cipher suites
-                serverSocket.setNeedClientAuth(false); // Optional: erfordert eine Authentifizierung des Clients
+                SSLSocket socket = (SSLSocket) serverSocket.accept();
+                String clientIP = socket.getInetAddress().getHostAddress();
+                int clientPort = socket.getPort();
 
-                System.out.println("Server hört auf Port 4999");
-            } catch (IOException e) {
-                System.out.println("Fehler beim Erstellen des SSL Server Sockets: " + e.getMessage());
-                return;
-            }
-            while (running) {
-                try {
-                    SSLSocket socket = (SSLSocket) serverSocket.accept();
-                    String clientIP = socket.getInetAddress().getHostAddress();
-                    int clientPort = socket.getPort();
-
-                // Überprüft ob, die IP-Adresse des Clients geändert wurde, was auf IP-Spoofing hinweisen könnte
-                if (previousIPs.containsKey(clientIP) && !previousIPs.get(clientIP).equals(clientIP)) {
-                    System.out.println("Möglicher IP-Spoofing-Angriff von IP erkannt: " + clientIP);
-                }
-                previousIPs.put(clientIP, clientIP);
-
-                // Aktualisiert die Verbindungsanzahl für diese IP
-                connectionCounts.put(clientIP, connectionCounts.getOrDefault(clientIP, 0) + 1);
-
-                // Wenn die Verbindungsanzahl für diese IP das Limit überschreitet, wird eine Warnung ausgegeben
-                if (connectionCounts.get(clientIP) > MAX_CONNECTIONS_PER_IP) {
-                    System.out.println("Möglicher Port-Scan von IP erkannt: " + clientIP);
-                }
-
-                // Aktualisiert die Ports, zu denen diese IP Verbindungen herstellt
-                if (!connectionPorts.containsKey(clientIP)) {
-                    connectionPorts.put(clientIP, new HashSet<>());
-                }
-                connectionPorts.get(clientIP).add(clientPort);
-
-                // Wenn die Anzahl der Ports, zu denen diese IP Verbindungen herstellt, das Limit überschreitet, wird eine Warnung ausgegeben
-                if (connectionPorts.get(clientIP).size() > MAX_CONNECTIONS_PER_IP) {
-                    System.out.println("Möglicher Port-Scan von IP erkannt: " + clientIP);
-                }
+                detectPortScanning(clientIP, clientPort);
 
                 // Aktualisiert die Zeitstempel der Anfragen für diese IP
                 if (!requestTimestamps.containsKey(clientIP)) {
@@ -145,13 +145,10 @@ public class NetworkMonitor {
                     }
                     recentRequests.get(clientIP).add(line);
 
-
-
                     // Entfernt die alten Anfragen, wenn die Liste zu groß wird
                     if (recentRequests.get(clientIP).size() > MAX_SIMILAR_REQUESTS) {
                         recentRequests.get(clientIP).removeFirst();
                     }
-
 
                     // Überprüft, ob alle Anfragen ähnlich sind
                     boolean allRequestsSimilar = true;
@@ -168,8 +165,6 @@ public class NetworkMonitor {
                         System.out.println("Möglicher DoS-Angriff von IP erkannt: " + clientIP);
                     }
                 }
-
-
 
                 socket.close();
             } catch (IOException ex) {
