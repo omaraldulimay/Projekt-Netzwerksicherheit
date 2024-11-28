@@ -1,6 +1,8 @@
 import java.util.Scanner;
 
 public class Application {
+    private static final Logger logger = new Logger();
+
     public static void main(String[] args) {
         NetworkMonitor networkMonitor = new NetworkMonitor();
         Scanner scanner = new Scanner(System.in);
@@ -9,6 +11,7 @@ public class Application {
         String verificationCode = scanner.nextLine();
 
         networkMonitor.login("admin", "password", verificationCode);
+        logger.logEvent("N/A", "Login Attempt", "Login attempt for user: admin");
 
         // Demonstrate the creation of network segments and restricted access between them
         networkMonitor.defineSegment("Segment1");

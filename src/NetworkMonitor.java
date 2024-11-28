@@ -20,15 +20,20 @@ public class NetworkMonitor {
 
     private final List<NetworkSegment> networkSegments = new ArrayList<>();
 
+    private final Logger logger = new Logger();
+
     public void login(String username, String password, String verificationCode) {
         if (isUsernameAndPasswordValid(username, password)) {
             if (mfaProvider.verifyCode(verificationCode)) {
                 System.out.println("Login successful for user: " + username);
+                logger.logEvent("N/A", "Login", "Login successful for user: " + username);
             } else {
                 System.out.println("Invalid verification code for user: " + username);
+                logger.logEvent("N/A", "Login", "Invalid verification code for user: " + username);
             }
         } else {
             System.out.println("Invalid username or password for user: " + username);
+            logger.logEvent("N/A", "Login", "Invalid username or password for user: " + username);
         }
     }
 
@@ -41,6 +46,7 @@ public class NetworkMonitor {
         // Überprüft ob, die IP-Adresse des Clients geändert wurde, was auf IP-Spoofing hinweisen könnte
         if (previousIPs.containsKey(clientIP) && !previousIPs.get(clientIP).equals(clientIP)) {
             System.out.println("Möglicher IP-Spoofing-Angriff von IP erkannt: " + clientIP);
+            logger.logEvent(clientIP, "IP-Spoofing", "Möglicher IP-Spoofing-Angriff von IP erkannt");
         }
         previousIPs.put(clientIP, clientIP);
 
@@ -50,6 +56,7 @@ public class NetworkMonitor {
         // Wenn die Verbindungsanzahl für diese IP das Limit überschreitet, wird eine Warnung ausgegeben
         if (connectionCounts.get(clientIP) > MAX_CONNECTIONS_PER_IP) {
             System.out.println("Möglicher Port-Scan von IP erkannt: " + clientIP);
+            logger.logEvent(clientIP, "Port-Scan", "Möglicher Port-Scan von IP erkannt");
             blockSuspiciousIP(clientIP);
         }
 
@@ -62,6 +69,7 @@ public class NetworkMonitor {
         // Wenn die Anzahl der Ports, zu denen diese IP Verbindungen herstellt, das Limit überschreitet, wird eine Warnung ausgegeben
         if (connectionPorts.get(clientIP).size() > MAX_CONNECTIONS_PER_IP) {
             System.out.println("Möglicher Port-Scan von IP erkannt: " + clientIP);
+            logger.logEvent(clientIP, "Port-Scan", "Möglicher Port-Scan von IP erkannt");
             blockSuspiciousIP(clientIP);
         }
     }
@@ -69,12 +77,14 @@ public class NetworkMonitor {
     private void blockSuspiciousIP(String clientIP) {
         blockedIPs.add(clientIP);
         System.out.println("IP-Adresse blockiert: " + clientIP);
+        logger.logEvent(clientIP, "Blocked IP", "IP-Adresse blockiert");
     }
 
     private void scanMessageForKeywords(String message, String clientIP) {
         for (String keyword : SUSPICIOUS_CONTENT_KEYWORDS) {
             if (message.toLowerCase().contains(keyword)) {
                 System.out.println("Verdächtiger Paketinhalt von IP erkannt: " + clientIP);
+                logger.logEvent(clientIP, "Suspicious Content", "Verdächtiger Paketinhalt erkannt");
                 blockSuspiciousIP(clientIP);
                 break;
             }
@@ -89,6 +99,7 @@ public class NetworkMonitor {
             }
         } catch (IOException e) {
             System.out.println("Fehler beim Laden der Signaturen: " + e.getMessage());
+            logger.logEvent("N/A", "Error", "Fehler beim Laden der Signaturen: " + e.getMessage());
         }
     }
 
@@ -96,6 +107,7 @@ public class NetworkMonitor {
         for (String signature : attackSignatures) {
             if (message.contains(signature)) {
                 System.out.println("Signaturbasierter Angriff von IP erkannt: " + clientIP);
+                logger.logEvent(clientIP, "Signature-Based Attack", "Signaturbasierter Angriff erkannt");
                 blockSuspiciousIP(clientIP);
                 break;
             }
@@ -105,6 +117,7 @@ public class NetworkMonitor {
     private void detectDoSAttack(String clientIP) {
         if (requestTimestamps.get(clientIP).size() > MAX_REQUESTS_PER_MINUTE) {
             System.out.println("Möglicher DoS-Angriff von IP erkannt: " + clientIP);
+            logger.logEvent(clientIP, "DoS Attack", "Möglicher DoS-Angriff erkannt");
             blockSuspiciousIP(clientIP);
         }
     }
@@ -219,10 +232,12 @@ public class NetworkMonitor {
                 // Wenn die Anzahl der Anfragen pro Minute für diese IP das Limit überschreitet, wird eine Warnung ausgegeben
                 if (requestTimestamps.get(clientIP).size() > MAX_REQUESTS_PER_MINUTE) {
                     System.out.println("Möglicher DoS-Angriff von IP erkannt: " + clientIP);
+                    logger.logEvent(clientIP, "DoS Attack", "Möglicher DoS-Angriff erkannt");
                     blockSuspiciousIP(clientIP);
                 }
 
                 System.out.println("Neuer Client verbunden");
+                logger.logEvent(clientIP, "Connection", "Neuer Client verbunden");
 
                 InputStream inputStream = socket.getInputStream();
                 BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
@@ -230,6 +245,7 @@ public class NetworkMonitor {
                 String line;
                 while ((line = reader.readLine()) != null) {
                     System.out.println("Empfangen: " + line);
+                    logger.logEvent(clientIP, "Message Received", "Empfangen: " + line);
 
                     scanMessageForKeywords(line, clientIP);
                     detectSignatureBasedAttack(line, clientIP);
@@ -238,6 +254,7 @@ public class NetworkMonitor {
                     // Überprüft, ob die IP-Adresse des Clients blockiert ist
                     if (blockedIPs.contains(clientIP)) {
                         System.out.println("Blockierte IP versucht, eine Verbindung herzustellen: " + clientIP);
+                        logger.logEvent(clientIP, "Blocked IP Attempt", "Blockierte IP versucht, eine Verbindung herzustellen");
                         socket.close();
                         break;
                     }
@@ -245,11 +262,13 @@ public class NetworkMonitor {
                     // Überprüft, ob die Länge der Nachricht einen bestimmten Schwellenwert überschreitet
                     if (line.length() > 1000) {
                         System.out.println("Verdächtiger Paketinhalt von IP erkannt (Nachricht zu lang): " + clientIP);
+                        logger.logEvent(clientIP, "Suspicious Content", "Verdächtiger Paketinhalt erkannt (Nachricht zu lang)");
                     }
 
                     // Überprüft, ob die Nachricht Sonderzeichen enthält
                     if (line.matches(".*[^a-zA-Z0-9 ].*")) {
                         System.out.println("Verdächtiger Paketinhalt von IP erkannt (Sonderzeichen in Nachricht): " + clientIP);
+                        logger.logEvent(clientIP, "Suspicious Content", "Verdächtiger Paketinhalt erkannt (Sonderzeichen in Nachricht)");
                     }
 
                     // Aktualisiert die letzten Anfragen für diese IP
@@ -276,6 +295,7 @@ public class NetworkMonitor {
                     // Wenn alle Anfragen ähnlich sind, wird eine Warnung ausgegeben
                     if (allRequestsSimilar) {
                         System.out.println("Möglicher DoS-Angriff von IP erkannt: " + clientIP);
+                        logger.logEvent(clientIP, "DoS Attack", "Möglicher DoS-Angriff erkannt");
                     }
                 }
 
