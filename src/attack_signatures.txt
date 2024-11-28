@@ -1,4 +1,0 @@
-# Sample attack signatures
-attack
-hack
-malware
