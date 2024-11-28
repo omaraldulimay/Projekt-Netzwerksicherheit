@@ -14,6 +14,7 @@ public class NetworkMonitor {
     private static final int MAX_SIMILAR_REQUESTS = 100;
     private static final Map<String, LinkedList<String>> recentRequests = new HashMap<>();
     private static final Set<String> blockedIPs = new HashSet<>();
+    private static final List<String> attackSignatures = new ArrayList<>();
 
     private final MFAProvider mfaProvider = new MFAProvider();
 
@@ -76,6 +77,27 @@ public class NetworkMonitor {
         }
     }
 
+    private void loadSignatures() {
+        try (BufferedReader br = new BufferedReader(new FileReader("src/attack_signatures.txt"))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                attackSignatures.add(line);
+            }
+        } catch (IOException e) {
+            System.out.println("Fehler beim Laden der Signaturen: " + e.getMessage());
+        }
+    }
+
+    private void detectSignatureBasedAttack(String message, String clientIP) {
+        for (String signature : attackSignatures) {
+            if (message.contains(signature)) {
+                System.out.println("Signaturbasierter Angriff von IP erkannt: " + clientIP);
+                blockSuspiciousIP(clientIP);
+                break;
+            }
+        }
+    }
+
     public static void main(String[] args) {
         boolean running = true;
         SSLServerSocket serverSocket;
@@ -90,6 +112,9 @@ public class NetworkMonitor {
             serverSocket.setNeedClientAuth(false); // Optional: erfordert eine Authentifizierung des Clients
 
             System.out.println("Server hört auf Port 4999");
+
+            NetworkMonitor networkMonitor = new NetworkMonitor();
+            networkMonitor.loadSignatures();
         } catch (IOException e) {
             System.out.println("Fehler beim Erstellen des SSL Server Sockets: " + e.getMessage());
             return;
@@ -130,6 +155,7 @@ public class NetworkMonitor {
                     System.out.println("Empfangen: " + line);
 
                     scanMessageForKeywords(line, clientIP);
+                    detectSignatureBasedAttack(line, clientIP);
 
                     // Überprüft, ob die IP-Adresse des Clients blockiert ist
                     if (blockedIPs.contains(clientIP)) {
