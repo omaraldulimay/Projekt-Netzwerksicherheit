@@ -117,6 +117,10 @@ public class NetworkMonitor {
         return false;
     }
 
+    private boolean verifyMFA(String verificationCode) {
+        return mfaProvider.verifyCode(verificationCode);
+    }
+
     public static void main(String[] args) {
         boolean running = true;
         SSLServerSocket serverSocket;
