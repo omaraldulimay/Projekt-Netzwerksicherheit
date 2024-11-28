@@ -22,11 +22,19 @@ public class NetworkMonitor {
 
     private final Logger logger = new Logger();
 
+    private final Map<String, Set<String>> userRoles = new HashMap<>();
+    private final Map<String, Set<String>> rolePermissions = new HashMap<>();
+
     public void login(String username, String password, String verificationCode) {
         if (isUsernameAndPasswordValid(username, password)) {
             if (mfaProvider.verifyCode(verificationCode)) {
-                System.out.println("Login successful for user: " + username);
-                logger.logEvent("N/A", "Login", "Login successful for user: " + username);
+                if (isUserAuthorized(username, "ACCESS_NETWORK")) {
+                    System.out.println("Login successful for user: " + username);
+                    logger.logEvent("N/A", "Login", "Login successful for user: " + username);
+                } else {
+                    System.out.println("User not authorized: " + username);
+                    logger.logEvent("N/A", "Login", "User not authorized: " + username);
+                }
             } else {
                 System.out.println("Invalid verification code for user: " + username);
                 logger.logEvent("N/A", "Login", "Invalid verification code for user: " + username);
@@ -178,6 +186,38 @@ public class NetworkMonitor {
                 segment1.removeAllowedIP(ip);
             }
         }
+    }
+
+    public void logAccessAttempt(String username, String resource, boolean success) {
+        String message = String.format("User: %s attempted to access resource: %s - Success: %s", username, resource, success);
+        logger.logEvent("N/A", "Access Attempt", message);
+    }
+
+    public void reviewPermissions() {
+        // In a real-world application, you would review and update permissions, policies, and security measures regularly
+        System.out.println("Reviewing and updating permissions, policies, and security measures...");
+        logger.logEvent("N/A", "Review", "Reviewing and updating permissions, policies, and security measures");
+    }
+
+    public boolean isUserAuthorized(String username, String permission) {
+        Set<String> roles = userRoles.get(username);
+        if (roles == null) {
+            return false;
+        }
+        for (String role : roles) {
+            Set<String> permissions = rolePermissions.get(role);
+            if (permissions != null && permissions.contains(permission)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public byte[] encryptData(byte[] data) {
+        // In a real-world application, you would use TLS/SSL to encrypt data during transmission and at rest
+        System.out.println("Encrypting data...");
+        logger.logEvent("N/A", "Encryption", "Encrypting data");
+        return data; // Placeholder for actual encryption logic
     }
 
     public static void main(String[] args) {

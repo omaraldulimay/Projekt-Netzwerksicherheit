@@ -19,5 +19,22 @@ public class Application {
         networkMonitor.assignDeviceToSegment("Segment1", "192.168.1.1");
         networkMonitor.assignDeviceToSegment("Segment2", "192.168.2.1");
         networkMonitor.restrictAccessBetweenSegments("Segment1", "Segment2");
+
+        // Authorization check
+        if (networkMonitor.isUserAuthorized("admin", "ACCESS_NETWORK")) {
+            System.out.println("User is authorized to access the network.");
+            logger.logEvent("N/A", "Authorization", "User is authorized to access the network.");
+        } else {
+            System.out.println("User is not authorized to access the network.");
+            logger.logEvent("N/A", "Authorization", "User is not authorized to access the network.");
+        }
+
+        // Encrypt data
+        byte[] data = "Sensitive data".getBytes();
+        byte[] encryptedData = networkMonitor.encryptData(data);
+        System.out.println("Data encrypted: " + new String(encryptedData));
+
+        // Log access attempt
+        networkMonitor.logAccessAttempt("admin", "Network Resource", true);
     }
 }

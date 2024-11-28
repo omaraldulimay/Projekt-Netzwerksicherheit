@@ -36,6 +36,16 @@ public class TestClient {
                 PrintWriter writer = new PrintWriter(socket.getOutputStream(), true);
                 writer.println("attack");
 
+                // Log access attempt
+                Logger logger = new Logger();
+                logger.logAccessAttempt("testUser", "Network Resource", true);
+
+                // Encrypt data
+                NetworkMonitor networkMonitor = new NetworkMonitor();
+                byte[] data = "Sensitive data".getBytes();
+                byte[] encryptedData = networkMonitor.encryptData(data);
+                System.out.println("Data encrypted: " + new String(encryptedData));
+
                 socket.close();
 
                 Thread.sleep(100); // 100 milliseconds delay between each request
