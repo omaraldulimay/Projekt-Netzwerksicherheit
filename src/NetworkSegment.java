@@ -22,4 +22,14 @@ public class NetworkSegment {
     public String getSegmentName() {
         return segmentName;
     }
+
+    public void restrictAccess(Set<String> roles, Map<String, Set<String>> rolePermissions) {
+        for (String role : roles) {
+            Set<String> permissions = rolePermissions.get(role);
+            if (permissions != null && !permissions.contains("ACCESS_" + segmentName.toUpperCase())) {
+                allowedIPs.clear();
+                break;
+            }
+        }
+    }
 }

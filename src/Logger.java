@@ -19,4 +19,16 @@ public class Logger {
             System.err.println("Error writing to log file: " + e.getMessage());
         }
     }
+
+    public void logAccessAttempt(String username, String resource, boolean success) {
+        String timestamp = LocalDateTime.now().format(DATE_TIME_FORMATTER);
+        String logMessage = String.format("%s - User: %s - Resource: %s - Success: %s", timestamp, username, resource, success);
+
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(LOG_FILE_PATH, true))) {
+            writer.write(logMessage);
+            writer.newLine();
+        } catch (IOException e) {
+            System.err.println("Error writing to log file: " + e.getMessage());
+        }
+    }
 }
