@@ -18,6 +18,8 @@ public class NetworkMonitor {
 
     private final MFAProvider mfaProvider = new MFAProvider();
 
+    private final List<NetworkSegment> networkSegments = new ArrayList<>();
+
     public void login(String username, String password, String verificationCode) {
         if (isUsernameAndPasswordValid(username, password)) {
             if (mfaProvider.verifyCode(verificationCode)) {
@@ -121,6 +123,50 @@ public class NetworkMonitor {
         return mfaProvider.verifyCode(verificationCode);
     }
 
+    public void defineSegment(String segmentName) {
+        networkSegments.add(new NetworkSegment(segmentName));
+    }
+
+    public void assignDeviceToSegment(String segmentName, String deviceIP) {
+        for (NetworkSegment segment : networkSegments) {
+            if (segment.getSegmentName().equals(segmentName)) {
+                segment.addAllowedIP(deviceIP);
+                return;
+            }
+        }
+        System.out.println("Segment not found: " + segmentName);
+    }
+
+    public void restrictAccessBetweenSegments(String segmentName1, String segmentName2) {
+        NetworkSegment segment1 = null;
+        NetworkSegment segment2 = null;
+
+        for (NetworkSegment segment : networkSegments) {
+            if (segment.getSegmentName().equals(segmentName1)) {
+                segment1 = segment;
+            } else if (segment.getSegmentName().equals(segmentName2)) {
+                segment2 = segment;
+            }
+        }
+
+        if (segment1 == null || segment2 == null) {
+            System.out.println("One or both segments not found: " + segmentName1 + ", " + segmentName2);
+            return;
+        }
+
+        for (String ip : segment1.getAllowedIPs()) {
+            if (segment2.isIPAllowed(ip)) {
+                segment2.removeAllowedIP(ip);
+            }
+        }
+
+        for (String ip : segment2.getAllowedIPs()) {
+            if (segment1.isIPAllowed(ip)) {
+                segment1.removeAllowedIP(ip);
+            }
+        }
+    }
+
     public static void main(String[] args) {
         boolean running = true;
         SSLServerSocket serverSocket;
@@ -138,6 +184,14 @@ public class NetworkMonitor {
 
             NetworkMonitor networkMonitor = new NetworkMonitor();
             networkMonitor.loadSignatures();
+
+            // Demonstrate the creation of network segments and restricted access between them
+            networkMonitor.defineSegment("Segment1");
+            networkMonitor.defineSegment("Segment2");
+            networkMonitor.assignDeviceToSegment("Segment1", "192.168.1.1");
+            networkMonitor.assignDeviceToSegment("Segment2", "192.168.2.1");
+            networkMonitor.restrictAccessBetweenSegments("Segment1", "Segment2");
+
         } catch (IOException e) {
             System.out.println("Fehler beim Erstellen des SSL Server Sockets: " + e.getMessage());
             return;
