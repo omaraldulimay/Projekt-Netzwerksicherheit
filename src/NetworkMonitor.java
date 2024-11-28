@@ -107,6 +107,16 @@ public class NetworkMonitor {
         }
     }
 
+    private boolean isTLSEnabled(SSLSocket socket) {
+        String[] enabledProtocols = socket.getEnabledProtocols();
+        for (String protocol : enabledProtocols) {
+            if (protocol.equals("TLSv1.2")) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public static void main(String[] args) {
         boolean running = true;
         SSLServerSocket serverSocket;
