@@ -3,6 +3,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.io.File;
 
 public class Logger {
     private static final String LOG_FILE_PATH = "logs/network_events.log";
@@ -11,6 +12,12 @@ public class Logger {
     public void logEvent(String ipAddress, String eventType, String message) {
         String timestamp = LocalDateTime.now().format(DATE_TIME_FORMATTER);
         String logMessage = String.format("%s - IP: %s - Event: %s - Message: %s", timestamp, ipAddress, eventType, message);
+
+        // Check for the existence of the logs directory and create it if it doesn't exist
+        File logsDir = new File("logs");
+        if (!logsDir.exists()) {
+            logsDir.mkdirs();
+        }
 
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(LOG_FILE_PATH, true))) {
             writer.write(logMessage);
@@ -24,6 +31,12 @@ public class Logger {
     public void logAccessAttempt(String username, String resource, boolean success) {
         String timestamp = LocalDateTime.now().format(DATE_TIME_FORMATTER);
         String logMessage = String.format("%s - User: %s - Resource: %s - Success: %s", timestamp, username, resource, success);
+
+        // Check for the existence of the logs directory and create it if it doesn't exist
+        File logsDir = new File("logs");
+        if (!logsDir.exists()) {
+            logsDir.mkdirs();
+        }
 
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(LOG_FILE_PATH, true))) {
             writer.write(logMessage);

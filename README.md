@@ -68,3 +68,7 @@ Dieses Projekt implementiert verschiedene Funktionen zur Netzwerksicherheit, ein
     - Führen Sie die Datei `src/Application.java` aus.
     - Geben Sie den Verifizierungscode "123456" ein, wenn Sie dazu aufgefordert werden.
     - Überprüfen Sie die Konsolenausgabe, um sicherzustellen, dass die MFA korrekt funktioniert und der Benutzer erfolgreich authentifiziert wird.
+
+11. **Erstellen des Logs-Verzeichnisses**:
+    - Stellen Sie sicher, dass das Verzeichnis `logs` im Projektverzeichnis vorhanden ist.
+    - Wenn das Verzeichnis nicht vorhanden ist, erstellen Sie es manuell oder führen Sie die Datei `src/Application.java` aus, um das Verzeichnis automatisch zu erstellen.
