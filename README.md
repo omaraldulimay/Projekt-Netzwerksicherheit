@@ -72,3 +72,15 @@ Dieses Projekt implementiert verschiedene Funktionen zur Netzwerksicherheit, ein
 11. **Erstellen des Logs-Verzeichnisses**:
     - Stellen Sie sicher, dass das Verzeichnis `logs` im Projektverzeichnis vorhanden ist.
     - Wenn das Verzeichnis nicht vorhanden ist, erstellen Sie es manuell oder führen Sie die Datei `src/Application.java` aus, um das Verzeichnis automatisch zu erstellen.
+
+## Simulieren von Port-Scans von verschiedenen IP-Adressen
+
+Um Port-Scans von verschiedenen IP-Adressen zu simulieren, folgen Sie diesen Schritten:
+
+1. **TestClient.java anpassen**:
+   - Öffnen Sie die Datei `src/TestClient.java` in Ihrer IDE oder Ihrem Texteditor.
+   - Fügen Sie Code hinzu, um mehrere Verbindungen zu verschiedenen Ports von verschiedenen IP-Adressen zu erstellen.
+
+2. **TestClient.java ausführen**:
+   - Führen Sie die Datei `src/TestClient.java` aus.
+   - Überprüfen Sie die Konsolenausgabe und die Protokolldatei `logs/network_events.log`, um sicherzustellen, dass die Port-Scans von verschiedenen IP-Adressen erkannt wurden.
