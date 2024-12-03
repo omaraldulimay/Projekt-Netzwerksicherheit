@@ -50,7 +50,7 @@ public class NetworkMonitor {
         return "admin".equals(username) && "password".equals(password);
     }
 
-    private void detectPortScanning(String clientIP, int clientPort) {
+    public void detectPortScanning(String clientIP, int clientPort) {
         // Check if the client's IP address has changed, which could indicate IP spoofing
         if (previousIPs.containsKey(clientIP) && !previousIPs.get(clientIP).equals(clientIP)) {
             System.out.println("Possible IP spoofing attack detected from IP: " + clientIP);
@@ -88,7 +88,7 @@ public class NetworkMonitor {
         logger.logEvent(clientIP, "Blocked IP", "IP address blocked");
     }
 
-    private void scanMessageForKeywords(String message, String clientIP) {
+    public void scanMessageForKeywords(String message, String clientIP) {
         for (String keyword : SUSPICIOUS_CONTENT_KEYWORDS) {
             if (message.toLowerCase().contains(keyword)) {
                 System.out.println("Suspicious packet content detected from IP: " + clientIP);
@@ -99,7 +99,7 @@ public class NetworkMonitor {
         }
     }
 
-    private void loadSignatures() {
+    public void loadSignatures() {
         try (BufferedReader br = new BufferedReader(new FileReader("src/attack_signatures.txt"))) {
             String line;
             while ((line = br.readLine()) != null) {
@@ -111,7 +111,7 @@ public class NetworkMonitor {
         }
     }
 
-    private void detectSignatureBasedAttack(String message, String clientIP) {
+    public void detectSignatureBasedAttack(String message, String clientIP) {
         for (String signature : attackSignatures) {
             if (message.contains(signature)) {
                 System.out.println("Signature-based attack detected from IP: " + clientIP);
@@ -122,7 +122,7 @@ public class NetworkMonitor {
         }
     }
 
-    private void detectDoSAttack(String clientIP) {
+    public void detectDoSAttack(String clientIP) {
         if (requestTimestamps.get(clientIP).size() > MAX_REQUESTS_PER_MINUTE) {
             System.out.println("Possible DoS attack detected from IP: " + clientIP);
             logger.logEvent(clientIP, "DoS Attack", "Possible DoS attack detected");

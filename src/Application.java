@@ -39,5 +39,20 @@ public class Application {
 
         // Log access attempt
         networkMonitor.logAccessAttempt("admin", "Network Resource", true);
+
+        // Load attack signatures
+        networkMonitor.loadSignatures();
+
+        // Demonstrate port scanning detection
+        networkMonitor.detectPortScanning("192.168.1.1", 8080);
+
+        // Demonstrate suspicious content detection
+        networkMonitor.scanMessageForKeywords("attack", "192.168.1.1");
+
+        // Demonstrate signature-based attack detection
+        networkMonitor.detectSignatureBasedAttack("attack_signature", "192.168.1.1");
+
+        // Demonstrate DoS attack detection
+        networkMonitor.detectDoSAttack("192.168.1.1");
     }
 }
