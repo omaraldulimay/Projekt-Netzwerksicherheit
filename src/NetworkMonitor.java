@@ -124,6 +124,9 @@ public class NetworkMonitor {
     }
 
     public static void detectDoSAttack(String clientIP) {
+        if (requestTimestamps.get(clientIP) == null) {
+            requestTimestamps.put(clientIP, new LinkedList<>());
+        }
         if (requestTimestamps.get(clientIP).size() > MAX_REQUESTS_PER_MINUTE) {
             System.out.println("Possible DoS attack detected from IP: " + clientIP);
             logger.logEvent(clientIP, "DoS Attack", "Possible DoS attack detected");
