@@ -7,10 +7,13 @@ public class Application {
         NetworkMonitor networkMonitor = new NetworkMonitor();
         Scanner scanner = new Scanner(System.in);
 
-        System.out.print("Enter verification code: ");
-        String verificationCode = scanner.nextLine();
+        // Generate a dynamic verification code and send it to the user
+        String verificationCode = networkMonitor.generateVerificationCode("admin");
 
-        networkMonitor.login("admin", "password", verificationCode);
+        System.out.print("Enter verification code: ");
+        String enteredCode = scanner.nextLine();
+
+        networkMonitor.login("admin", "password", enteredCode);
         logger.logEvent("N/A", "Login Attempt", "Login attempt for user: admin");
 
         // Demonstrate the creation of network segments and restricted access between them
