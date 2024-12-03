@@ -2,9 +2,22 @@ import javax.net.ssl.*;
 import java.io.*;
 import java.security.SecureRandom;
 import java.security.cert.X509Certificate;
+import java.util.Scanner;
 
 public class TestClient {
     public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.print("Enter server address: ");
+        String serverAddress = scanner.nextLine();
+
+        System.out.print("Enter server port: ");
+        int serverPort = scanner.nextInt();
+        scanner.nextLine(); // Consume newline
+
+        System.out.print("Enter message to send: ");
+        String message = scanner.nextLine();
+
         for (int i = 0; i < 100; i++) {
             try {
                 // Create a trust manager that does not validate certificate chains
@@ -26,7 +39,7 @@ public class TestClient {
 
                 // Create an SSLSocketFactory that uses our all-trusting manager
                 SSLSocketFactory sslSocketFactory = sc.getSocketFactory();
-                SSLSocket socket = (SSLSocket) sslSocketFactory.createSocket("localhost", 4999);
+                SSLSocket socket = (SSLSocket) sslSocketFactory.createSocket(serverAddress, serverPort);
                 String[] supportedCipherSuites = socket.getSupportedCipherSuites();
                 socket.setEnabledCipherSuites(supportedCipherSuites);
 
@@ -34,7 +47,7 @@ public class TestClient {
                 socket.setEnabledCipherSuites(socket.getSupportedCipherSuites());
 
                 PrintWriter writer = new PrintWriter(socket.getOutputStream(), true);
-                writer.println("attack");
+                writer.println(message);
 
                 // Log access attempt
                 Logger logger = new Logger();

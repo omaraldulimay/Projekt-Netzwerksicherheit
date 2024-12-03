@@ -17,6 +17,7 @@ public class Logger {
             writer.newLine();
         } catch (IOException e) {
             System.err.println("Error writing to log file: " + e.getMessage());
+            e.printStackTrace(); // Added proper exception handling
         }
     }
 
@@ -29,6 +30,7 @@ public class Logger {
             writer.newLine();
         } catch (IOException e) {
             System.err.println("Error writing to log file: " + e.getMessage());
+            e.printStackTrace(); // Added proper exception handling
         }
     }
 }
