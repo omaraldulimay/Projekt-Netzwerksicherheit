@@ -101,7 +101,14 @@ public class NetworkMonitor {
     }
 
     public void loadSignatures() {
-        try (BufferedReader br = new BufferedReader(new FileReader("src/attack_signatures.txt"))) {
+        File file = new File("src/attack_signatures.txt");
+        if (!file.exists()) {
+            System.out.println("Warning: attack signatures file not found: " + file.getPath());
+            logger.logEvent("N/A", "Warning", "Attack signatures file not found: " + file.getPath());
+            return;
+        }
+
+        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
             String line;
             while ((line = br.readLine()) != null) {
                 attackSignatures.add(line);
