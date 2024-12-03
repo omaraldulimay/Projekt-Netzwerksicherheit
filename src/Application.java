@@ -1,4 +1,6 @@
 import java.util.Scanner;
+import java.util.Set;
+import java.util.Map;
 
 public class Application {
     private static final Logger logger = new Logger();
@@ -6,9 +8,6 @@ public class Application {
     public static void main(String[] args) {
         NetworkMonitor networkMonitor = new NetworkMonitor();
         Scanner scanner = new Scanner(System.in);
-
-        // Generate a dynamic verification code and send it to the user
-        String verificationCode = networkMonitor.generateVerificationCode("admin");
 
         System.out.print("Enter verification code: ");
         String enteredCode = scanner.nextLine();

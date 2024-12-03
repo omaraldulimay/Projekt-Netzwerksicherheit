@@ -20,7 +20,7 @@ public class NetworkMonitor {
 
     private final List<NetworkSegment> networkSegments = new ArrayList<>();
 
-    private final Logger logger = new Logger();
+    private static final Logger logger = new Logger();
 
     private final Map<String, Set<String>> userRoles = new HashMap<>();
     private final Map<String, Set<String>> rolePermissions = new HashMap<>();
@@ -50,7 +50,7 @@ public class NetworkMonitor {
         return "admin".equals(username) && "password".equals(password);
     }
 
-    public void detectPortScanning(String clientIP, int clientPort) {
+    public static void detectPortScanning(String clientIP, int clientPort) {
         // Check if the client's IP address has changed, which could indicate IP spoofing
         if (previousIPs.containsKey(clientIP) && !previousIPs.get(clientIP).equals(clientIP)) {
             System.out.println("Possible IP spoofing attack detected from IP: " + clientIP);
@@ -82,13 +82,13 @@ public class NetworkMonitor {
         }
     }
 
-    private void blockSuspiciousIP(String clientIP) {
+    private static void blockSuspiciousIP(String clientIP) {
         blockedIPs.add(clientIP);
         System.out.println("IP address blocked: " + clientIP);
         logger.logEvent(clientIP, "Blocked IP", "IP address blocked");
     }
 
-    public void scanMessageForKeywords(String message, String clientIP) {
+    public static void scanMessageForKeywords(String message, String clientIP) {
         for (String keyword : SUSPICIOUS_CONTENT_KEYWORDS) {
             if (message.toLowerCase().contains(keyword)) {
                 System.out.println("Suspicious packet content detected from IP: " + clientIP);
@@ -111,7 +111,7 @@ public class NetworkMonitor {
         }
     }
 
-    public void detectSignatureBasedAttack(String message, String clientIP) {
+    public static void detectSignatureBasedAttack(String message, String clientIP) {
         for (String signature : attackSignatures) {
             if (message.contains(signature)) {
                 System.out.println("Signature-based attack detected from IP: " + clientIP);
@@ -122,7 +122,7 @@ public class NetworkMonitor {
         }
     }
 
-    public void detectDoSAttack(String clientIP) {
+    public static void detectDoSAttack(String clientIP) {
         if (requestTimestamps.get(clientIP).size() > MAX_REQUESTS_PER_MINUTE) {
             System.out.println("Possible DoS attack detected from IP: " + clientIP);
             logger.logEvent(clientIP, "DoS Attack", "Possible DoS attack detected");

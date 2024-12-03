@@ -1,3 +1,7 @@
+import java.util.Set;
+import java.util.HashSet;
+import java.util.Map;
+
 public class NetworkSegment {
     private String segmentName;
     private Set<String> allowedIPs;
@@ -21,6 +25,10 @@ public class NetworkSegment {
 
     public String getSegmentName() {
         return segmentName;
+    }
+
+    public Set<String> getAllowedIPs() {
+        return allowedIPs;
     }
 
     public void restrictAccess(Set<String> roles, Map<String, Set<String>> rolePermissions) {
