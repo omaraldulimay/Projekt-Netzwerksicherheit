@@ -1,6 +1,7 @@
 import java.io.*;
 import java.util.*;
 import javax.net.ssl.*;
+import java.net.BindException;
 
 public class NetworkMonitor {
     private static final int MAX_CONNECTIONS_PER_IP = 50;
@@ -234,7 +235,7 @@ public class NetworkMonitor {
 
     public static void main(String[] args) {
         boolean running = true;
-        SSLServerSocket serverSocket;
+        SSLServerSocket serverSocket = null;
 
         try {
             SSLServerSocketFactory sslServerSocketFactory = (SSLServerSocketFactory) SSLServerSocketFactory.getDefault();
@@ -257,10 +258,14 @@ public class NetworkMonitor {
             networkMonitor.assignDeviceToSegment("Segment2", "192.168.2.1");
             networkMonitor.restrictAccessBetweenSegments("Segment1", "Segment2");
 
+        } catch (BindException e) {
+            System.out.println("Port 4999 is already in use. Please close the application using this port or choose a different port.");
+            return;
         } catch (IOException e) {
             System.out.println("Fehler beim Erstellen des SSL Server Sockets: " + e.getMessage());
             return;
         }
+
         while (running) {
             try {
                 SSLSocket socket = (SSLSocket) serverSocket.accept();
