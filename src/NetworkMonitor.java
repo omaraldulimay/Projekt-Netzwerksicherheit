@@ -101,8 +101,8 @@ public class NetworkMonitor {
     }
 
     public void loadSignatures() {
-        String absolutePath = new File("src/attack_signatures.txt").getAbsolutePath();
-        File file = new File(absolutePath);
+        String path = "src/attack_signatures.txt";
+        File file = new File(path);
         if (!file.exists()) {
             System.out.println("Warning: attack signatures file not found: " + file.getPath());
             logger.logEvent("N/A", "Warning", "Attack signatures file not found: " + file.getPath());
