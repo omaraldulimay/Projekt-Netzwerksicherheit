@@ -1,15 +1,15 @@
 public class MFAProvider {
-    private String storedCode; // This will store the dynamic verification code
+    private String storedCode; // Dies wird den dynamischen Verifizierungscode speichern
 
     public void sendVerificationCode(String username, String verificationCode) {
         this.storedCode = verificationCode;
-        // In a real-world application, you would integrate with an SMS or email service to send the verification code
-        System.out.println("A verification code has been sent to the user: " + username);
-        System.out.println("Generated verification code: " + verificationCode);
+        // In einer realen Anwendung würden Sie einen SMS- oder E-Mail-Dienst integrieren, um den Verifizierungscode zu senden
+        System.out.println("Ein Verifizierungscode wurde an den Benutzer gesendet: " + username);
+        System.out.println("Generierter Verifizierungscode: " + verificationCode);
     }
 
     public boolean verifyCode(String enteredCode) {
-        // In a real-world application, you would check the code entered by the user against the code that was sent to them
+        // In einer realen Anwendung würden Sie den vom Benutzer eingegebenen Code mit dem gesendeten Code abgleichen
         return storedCode.equals(enteredCode);
     }
 }

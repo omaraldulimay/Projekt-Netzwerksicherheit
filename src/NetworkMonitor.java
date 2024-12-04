@@ -5,7 +5,7 @@ import java.net.BindException;
 
 public class NetworkMonitor {
     private static final int MAX_CONNECTIONS_PER_IP = 50;
-    private static final int MAX_REQUESTS_PER_MINUTE = 1000;
+    private static final int MAX_REQUESTS_PER_MINute = 1000;
     private static final List<String> SUSPICIOUS_CONTENT_KEYWORDS = Arrays.asList("attack", "hack", "malware");
 
     private static final Map<String, Integer> connectionCounts = new HashMap<>();
@@ -27,7 +27,7 @@ public class NetworkMonitor {
     private final Map<String, Set<String>> rolePermissions = new HashMap<>();
 
     public NetworkMonitor() {
-        // Initialize roles and permissions
+        // Initialisieren Sie Rollen und Berechtigungen
         Set<String> adminRoles = new HashSet<>();
         adminRoles.add("ADMIN");
         userRoles.put("admin", adminRoles);
@@ -42,70 +42,70 @@ public class NetworkMonitor {
         if (isUsernameAndPasswordValid(username, password)) {
             if (mfaProvider.verifyCode(verificationCode)) {
                 if (isUserAuthorized(username, "ACCESS_NETWORK")) {
-                    System.out.println("Login successful for user: " + username);
-                    logger.logEvent("N/A", "Login", "Login successful for user: " + username);
+                    System.out.println("Login erfolgreich für Benutzer: " + username);
+                    logger.logEvent("N/A", "Login", "Login erfolgreich für Benutzer: " + username);
                 } else {
-                    System.out.println("User not authorized: " + username);
-                    logger.logEvent("N/A", "Login", "User not authorized: " + username);
+                    System.out.println("Benutzer nicht autorisiert: " + username);
+                    logger.logEvent("N/A", "Login", "Benutzer nicht autorisiert: " + username);
                 }
             } else {
-                System.out.println("Invalid verification code for user: " + username);
-                logger.logEvent("N/A", "Login", "Invalid verification code for user: " + username);
+                System.out.println("Ungültiger Verifizierungscode für Benutzer: " + username);
+                logger.logEvent("N/A", "Login", "Ungültiger Verifizierungscode für Benutzer: " + username);
             }
         } else {
-            System.out.println("Invalid username or password for user: " + username);
-            logger.logEvent("N/A", "Login", "Invalid username or password for user: " + username);
+            System.out.println("Ungültiger Benutzername oder Passwort für Benutzer: " + username);
+            logger.logEvent("N/A", "Login", "Ungültiger Benutzername oder Passwort für Benutzer: " + username);
         }
     }
 
     private boolean isUsernameAndPasswordValid(String username, String password) {
-        // In a real-world application, you would check the username and password against your user database
+        // In einer realen Anwendung würden Sie den Benutzernamen und das Passwort mit Ihrer Benutzerdatenbank abgleichen
         return "admin".equals(username) && "password".equals(password);
     }
 
     public static void detectPortScanning(String clientIP, int clientPort) {
-        // Check if the client's IP address has changed, which could indicate IP spoofing
+        // Überprüfen Sie, ob sich die IP-Adresse des Clients geändert hat, was auf IP-Spoofing hinweisen könnte
         if (previousIPs.containsKey(clientIP) && !previousIPs.get(clientIP).equals(clientIP)) {
-            System.out.println("Possible IP spoofing attack detected from IP: " + clientIP);
-            logger.logEvent(clientIP, "IP-Spoofing", "Possible IP spoofing attack detected");
+            System.out.println("Möglicher IP-Spoofing-Angriff von IP erkannt: " + clientIP);
+            logger.logEvent(clientIP, "IP-Spoofing", "Möglicher IP-Spoofing-Angriff erkannt");
         }
         previousIPs.put(clientIP, clientIP);
 
-        // Update the connection count for this IP
+        // Aktualisieren Sie die Verbindungsanzahl für diese IP
         connectionCounts.put(clientIP, connectionCounts.getOrDefault(clientIP, 0) + 1);
 
-        // If the connection count for this IP exceeds the limit, issue a warning
+        // Wenn die Verbindungsanzahl für diese IP das Limit überschreitet, geben Sie eine Warnung aus
         if (connectionCounts.get(clientIP) > MAX_CONNECTIONS_PER_IP) {
-            System.out.println("Possible port scan detected from IP: " + clientIP);
-            logger.logEvent(clientIP, "Port-Scan", "Possible port scan detected");
+            System.out.println("Möglicher Port-Scan von IP erkannt: " + clientIP);
+            logger.logEvent(clientIP, "Port-Scan", "Möglicher Port-Scan erkannt");
             blockSuspiciousIP(clientIP);
         }
 
-        // Update the ports this IP is connecting to
+        // Aktualisieren Sie die Ports, mit denen diese IP verbunden ist
         if (!connectionPorts.containsKey(clientIP)) {
             connectionPorts.put(clientIP, new HashSet<>());
         }
         connectionPorts.get(clientIP).add(clientPort);
 
-        // If the number of ports this IP is connecting to exceeds the limit, issue a warning
+        // Wenn die Anzahl der Ports, mit denen diese IP verbunden ist, das Limit überschreitet, geben Sie eine Warnung aus
         if (connectionPorts.get(clientIP).size() > MAX_CONNECTIONS_PER_IP) {
-            System.out.println("Possible port scan detected from IP: " + clientIP);
-            logger.logEvent(clientIP, "Port-Scan", "Possible port scan detected");
+            System.out.println("Möglicher Port-Scan von IP erkannt: " + clientIP);
+            logger.logEvent(clientIP, "Port-Scan", "Möglicher Port-Scan erkannt");
             blockSuspiciousIP(clientIP);
         }
     }
 
     private static void blockSuspiciousIP(String clientIP) {
         blockedIPs.add(clientIP);
-        System.out.println("IP address blocked: " + clientIP);
-        logger.logEvent(clientIP, "Blocked IP", "IP address blocked");
+        System.out.println("IP-Adresse blockiert: " + clientIP);
+        logger.logEvent(clientIP, "Blocked IP", "IP-Adresse blockiert");
     }
 
     public static void scanMessageForKeywords(String message, String clientIP) {
         for (String keyword : SUSPICIOUS_CONTENT_KEYWORDS) {
             if (message.toLowerCase().contains(keyword)) {
-                System.out.println("Suspicious packet content detected from IP: " + clientIP);
-                logger.logEvent(clientIP, "Suspicious Content", "Suspicious packet content detected: " + message);
+                System.out.println("Verdächtiger Paketinhalt von IP erkannt: " + clientIP);
+                logger.logEvent(clientIP, "Suspicious Content", "Verdächtiger Paketinhalt erkannt: " + message);
                 blockSuspiciousIP(clientIP);
                 break;
             }
@@ -115,9 +115,9 @@ public class NetworkMonitor {
     public void loadSignatures() {
         String path = "src/attack_signatures.txt";
         File file = new File(path);
-        if (!file.exists()) {
-            System.out.println("Warning: attack signatures file not found: " + file.getPath());
-            logger.logEvent("N/A", "Warning", "Attack signatures file not found: " + file.getPath());
+        if (!file exists()) {
+            System.out.println("Warnung: Datei mit Angriffssignaturen nicht gefunden: " + file.getPath());
+            logger.logEvent("N/A", "Warnung", "Datei mit Angriffssignaturen nicht gefunden: " + file.getPath());
             return;
         }
 
@@ -127,16 +127,16 @@ public class NetworkMonitor {
                 attackSignatures.add(line);
             }
         } catch (IOException e) {
-            System.out.println("Error loading signatures: " + e.getMessage());
-            logger.logEvent("N/A", "Error", "Error loading signatures: " + e.getMessage());
+            System.out.println("Fehler beim Laden der Signaturen: " + e.getMessage());
+            logger.logEvent("N/A", "Fehler", "Fehler beim Laden der Signaturen: " + e.getMessage());
         }
     }
 
     public static void detectSignatureBasedAttack(String message, String clientIP) {
         for (String signature : attackSignatures) {
             if (message.contains(signature)) {
-                System.out.println("Signature-based attack detected from IP: " + clientIP);
-                logger.logEvent(clientIP, "Signature-Based Attack", "Signature-based attack detected");
+                System.out.println("Signaturbasierter Angriff von IP erkannt: " + clientIP);
+                logger.logEvent(clientIP, "Signature-Based Attack", "Signaturbasierter Angriff erkannt");
                 blockSuspiciousIP(clientIP);
                 break;
             }
@@ -147,9 +147,9 @@ public class NetworkMonitor {
         if (requestTimestamps.get(clientIP) == null) {
             requestTimestamps.put(clientIP, new LinkedList<>());
         }
-        if (requestTimestamps.get(clientIP).size() > MAX_REQUESTS_PER_MINUTE) {
-            System.out.println("Possible DoS attack detected from IP: " + clientIP);
-            logger.logEvent(clientIP, "DoS Attack", "Possible DoS attack detected");
+        if (requestTimestamps.get(clientIP).size() > MAX_REQUESTS_PER_MINute) {
+            System.out.println("Möglicher DoS-Angriff von IP erkannt: " + clientIP);
+            logger.logEvent(clientIP, "DoS Attack", "Möglicher DoS-Angriff erkannt");
             blockSuspiciousIP(clientIP);
         }
     }
@@ -179,7 +179,7 @@ public class NetworkMonitor {
                 return;
             }
         }
-        System.out.println("Segment not found: " + segmentName);
+        System.out.println("Segment nicht gefunden: " + segmentName);
     }
 
     public void restrictAccessBetweenSegments(String segmentName1, String segmentName2) {
@@ -195,7 +195,7 @@ public class NetworkMonitor {
         }
 
         if (segment1 == null || segment2 == null) {
-            System.out.println("One or both segments not found: " + segmentName1 + ", " + segmentName2);
+            System.out.println("Eines oder beide Segmente nicht gefunden: " + segmentName1 + ", " + segmentName2);
             return;
         }
 
@@ -213,14 +213,14 @@ public class NetworkMonitor {
     }
 
     public void logAccessAttempt(String username, String resource, boolean success) {
-        String message = String.format("User: %s attempted to access resource: %s - Success: %s", username, resource, success);
+        String message = String.format("Benutzer: %s hat versucht, auf Ressource zuzugreifen: %s - Erfolg: %s", username, resource, success);
         logger.logEvent("N/A", "Access Attempt", message);
     }
 
     public void reviewPermissions() {
-        // In a real-world application, you would review and update permissions, policies, and security measures regularly
-        System.out.println("Reviewing and updating permissions, policies, and security measures...");
-        logger.logEvent("N/A", "Review", "Reviewing and updating permissions, policies, and security measures");
+        // In einer realen Anwendung würden Sie regelmäßig Berechtigungen, Richtlinien und Sicherheitsmaßnahmen überprüfen und aktualisieren
+        System.out.println("Überprüfung und Aktualisierung von Berechtigungen, Richtlinien und Sicherheitsmaßnahmen...");
+        logger.logEvent("N/A", "Review", "Überprüfung und Aktualisierung von Berechtigungen, Richtlinien und Sicherheitsmaßnahmen");
     }
 
     public boolean isUserAuthorized(String username, String permission) {
@@ -238,10 +238,10 @@ public class NetworkMonitor {
     }
 
     public byte[] encryptData(byte[] data) {
-        // In a real-world application, you would use TLS/SSL to encrypt data during transmission and at rest
-        System.out.println("Encrypting data...");
-        logger.logEvent("N/A", "Encryption", "Encrypting data");
-        return data; // Placeholder for actual encryption logic
+        // In einer realen Anwendung würden Sie TLS/SSL verwenden, um Daten während der Übertragung und im Ruhezustand zu verschlüsseln
+        System.out.println("Daten werden verschlüsselt...");
+        logger.logEvent("N/A", "Encryption", "Daten werden verschlüsselt");
+        return data; // Platzhalter für die eigentliche Verschlüsselungslogik
     }
 
     public static void main(String[] args) {
@@ -253,8 +253,8 @@ public class NetworkMonitor {
             serverSocket = (SSLServerSocket) sslServerSocketFactory.createServerSocket(4999);
             String[] supportedCipherSuites = serverSocket.getSupportedCipherSuites();
             serverSocket.setEnabledCipherSuites(supportedCipherSuites);
-            serverSocket.setEnabledProtocols(new String[] {"TLSv1.2"}); // Specify the SSL/TLS protocol
-            serverSocket.setEnabledCipherSuites(serverSocket.getSupportedCipherSuites()); // Enable all supported cipher suites
+            serverSocket.setEnabledProtocols(new String[] {"TLSv1.2"}); // Geben Sie das SSL/TLS-Protokoll an
+            serverSocket.setEnabledCipherSuites(serverSocket.getSupportedCipherSuites()); // Aktivieren Sie alle unterstützten Cipher-Suites
             serverSocket.setNeedClientAuth(false); // Optional: erfordert eine Authentifizierung des Clients
 
             System.out.println("Server hört auf Port 4999");
@@ -262,7 +262,7 @@ public class NetworkMonitor {
             NetworkMonitor networkMonitor = new NetworkMonitor();
             networkMonitor.loadSignatures();
 
-            // Demonstrate the creation of network segments and restricted access between them
+            // Demonstrieren Sie die Erstellung von Netzwerksegmenten und den eingeschränkten Zugriff zwischen ihnen
             networkMonitor.defineSegment("Segment1");
             networkMonitor.defineSegment("Segment2");
             networkMonitor.assignDeviceToSegment("Segment1", "192.168.1.1");
@@ -270,10 +270,10 @@ public class NetworkMonitor {
             networkMonitor.restrictAccessBetweenSegments("Segment1", "Segment2");
 
         } catch (BindException e) {
-            System.out.println("Port 4999 is already in use. Please close the application using this port or choose a different port.");
+            System.out.println("Port 4999 ist bereits in Verwendung. Bitte schließen Sie die Anwendung, die diesen Port verwendet, oder wählen Sie einen anderen Port.");
             return;
         } catch (IOException e) {
-            System.out.println("Fehler beim Erstellen des SSL Server Sockets: " + e.getMessage());
+            System.out.println("Fehler beim Erstellen des SSL-Server-Sockets: " + e.getMessage());
             return;
         }
 
@@ -285,20 +285,20 @@ public class NetworkMonitor {
 
                 detectPortScanning(clientIP, clientPort);
 
-                // Aktualisiert die Zeitstempel der Anfragen für diese IP
+                // Aktualisieren Sie die Zeitstempel der Anfragen für diese IP
                 if (!requestTimestamps.containsKey(clientIP)) {
                     requestTimestamps.put(clientIP, new LinkedList<>());
                 }
                 requestTimestamps.get(clientIP).add(System.currentTimeMillis());
 
-                // Entfernt die Zeitstempel, die älter als eine Minute sind
+                // Entfernen Sie die Zeitstempel, die älter als eine Minute sind
                 LinkedList<Long> timestamps = requestTimestamps.get(clientIP);
-                if (timestamps != null && !timestamps.isEmpty() && timestamps.peek() < System.currentTimeMillis() - 60000) {
+                if (timestamps != null && nicht leer && timestamps.peek() < System.currentTimeMillis() - 60000) {
                     timestamps.remove();
                 }
 
-                // Wenn die Anzahl der Anfragen pro Minute für diese IP das Limit überschreitet, wird eine Warnung ausgegeben
-                if (requestTimestamps.get(clientIP).size() > MAX_REQUESTS_PER_MINUTE) {
+                // Wenn die Anzahl der Anfragen pro Minute für diese IP das Limit überschreitet, geben Sie eine Warnung aus
+                if (requestTimestamps.get(clientIP).size() > MAX_REQUESTS_PER MINute) {
                     System.out.println("Möglicher DoS-Angriff von IP erkannt: " + clientIP);
                     logger.logEvent(clientIP, "DoS Attack", "Möglicher DoS-Angriff erkannt");
                     blockSuspiciousIP(clientIP);
@@ -319,7 +319,7 @@ public class NetworkMonitor {
                     detectSignatureBasedAttack(line, clientIP);
                     detectDoSAttack(clientIP);
 
-                    // Überprüft, ob die IP-Adresse des Clients blockiert ist
+                    // Überprüfen Sie, ob die IP-Adresse des Clients blockiert ist
                     if (blockedIPs.contains(clientIP)) {
                         System.out.println("Blockierte IP versucht, eine Verbindung herzustellen: " + clientIP);
                         logger.logEvent(clientIP, "Blocked IP Attempt", "Blockierte IP versucht, eine Verbindung herzustellen");
@@ -327,30 +327,30 @@ public class NetworkMonitor {
                         break;
                     }
 
-                    // Überprüft, ob die Länge der Nachricht einen bestimmten Schwellenwert überschreitet
+                    // Überprüfen Sie, ob die Länge der Nachricht einen bestimmten Schwellenwert überschreitet
                     if (line.length() > 1000) {
                         System.out.println("Verdächtiger Paketinhalt von IP erkannt (Nachricht zu lang): " + clientIP);
                         logger.logEvent(clientIP, "Suspicious Content", "Verdächtiger Paketinhalt erkannt (Nachricht zu lang)");
                     }
 
-                    // Überprüft, ob die Nachricht Sonderzeichen enthält
+                    // Überprüfen Sie, ob die Nachricht Sonderzeichen enthält
                     if (line.matches(".*[^a-zA-Z0-9 ].*")) {
                         System.out.println("Verdächtiger Paketinhalt von IP erkannt (Sonderzeichen in Nachricht): " + clientIP);
                         logger.logEvent(clientIP, "Suspicious Content", "Verdächtiger Paketinhalt erkannt (Sonderzeichen in Nachricht)");
                     }
 
-                    // Aktualisiert die letzten Anfragen für diese IP
+                    // Aktualisieren Sie die letzten Anfragen für diese IP
                     if (!recentRequests.containsKey(clientIP)) {
                         recentRequests.put(clientIP, new LinkedList<>());
                     }
                     recentRequests.get(clientIP).add(line);
 
-                    // Entfernt die alten Anfragen, wenn die Liste zu groß wird
+                    // Entfernen Sie die alten Anfragen, wenn die Liste zu groß wird
                     if (recentRequests.get(clientIP).size() > MAX_SIMILAR_REQUESTS) {
                         recentRequests.get(clientIP).removeFirst();
                     }
 
-                    // Überprüft, ob alle Anfragen ähnlich sind
+                    // Überprüfen Sie, ob alle Anfragen ähnlich sind
                     boolean allRequestsSimilar = true;
                     String firstRequest = recentRequests.get(clientIP).getFirst();
                     for (String request : recentRequests.get(clientIP)) {
@@ -360,7 +360,7 @@ public class NetworkMonitor {
                         }
                     }
 
-                    // Wenn alle Anfragen ähnlich sind, wird eine Warnung ausgegeben
+                    // Wenn alle Anfragen ähnlich sind, geben Sie eine Warnung aus
                     if (allRequestsSimilar) {
                         System.out.println("Möglicher DoS-Angriff von IP erkannt: " + clientIP);
                         logger.logEvent(clientIP, "DoS Attack", "Möglicher DoS-Angriff erkannt");

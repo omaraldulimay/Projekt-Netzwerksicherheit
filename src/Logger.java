@@ -13,7 +13,7 @@ public class Logger {
         String timestamp = LocalDateTime.now().format(DATE_TIME_FORMATTER);
         String logMessage = String.format("%s - IP: %s - Event: %s - Message: %s", timestamp, ipAddress, eventType, message);
 
-        // Check for the existence of the logs directory and create it if it doesn't exist
+        // Überprüfen Sie das Vorhandensein des Logs-Verzeichnisses und erstellen Sie es, falls es nicht existiert
         File logsDir = new File("logs");
         if (!logsDir.exists()) {
             logsDir.mkdirs();
@@ -23,16 +23,16 @@ public class Logger {
             writer.write(logMessage);
             writer.newLine();
         } catch (IOException e) {
-            System.err.println("Error writing to log file: " + e.getMessage());
-            e.printStackTrace(); // Added proper exception handling
+            System.err.println("Fehler beim Schreiben in die Protokolldatei: " + e.getMessage());
+            e.printStackTrace(); // Hinzugefügt ordnungsgemäße Ausnahmebehandlung
         }
     }
 
     public void logAccessAttempt(String username, String resource, boolean success) {
         String timestamp = LocalDateTime.now().format(DATE_TIME_FORMATTER);
-        String logMessage = String.format("%s - User: %s - Resource: %s - Success: %s", timestamp, username, resource, success);
+        String logMessage = String.format("%s - Benutzer: %s - Ressource: %s - Erfolg: %s", timestamp, username, resource, success);
 
-        // Check for the existence of the logs directory and create it if it doesn't exist
+        // Überprüfen Sie das Vorhandensein des Logs-Verzeichnisses und erstellen Sie es, falls es nicht existiert
         File logsDir = new File("logs");
         if (!logsDir.exists()) {
             logsDir.mkdirs();
@@ -42,8 +42,8 @@ public class Logger {
             writer.write(logMessage);
             writer.newLine();
         } catch (IOException e) {
-            System.err.println("Error writing to log file: " + e.getMessage());
-            e.printStackTrace(); // Added proper exception handling
+            System.err.println("Fehler beim Schreiben in die Protokolldatei: " + e.getMessage());
+            e.printStackTrace(); // Hinzugefügt ordnungsgemäße Ausnahmebehandlung
         }
     }
 }

@@ -11,74 +11,74 @@ public class Application {
         MFAProvider mfaProvider = new MFAProvider();
         Scanner scanner = new Scanner(System.in);
 
-        // Check for the existence of the logs directory and create it if it doesn't exist
+        // Überprüfen Sie das Vorhandensein des Logs-Verzeichnisses und erstellen Sie es, falls es nicht existiert
         File logsDir = new File("logs");
         if (!logsDir.exists()) {
             logsDir.mkdirs();
         }
 
-        // Generate a dynamic verification code
+        // Generieren Sie einen dynamischen Verifizierungscode
         String dynamicVerificationCode = generateDynamicVerificationCode();
         mfaProvider.sendVerificationCode("admin", dynamicVerificationCode);
 
-        // Display the generated verification code to the user
-        System.out.println("Generated verification code: " + dynamicVerificationCode);
+        // Zeigen Sie den generierten Verifizierungscode dem Benutzer an
+        System.out.println("Generierter Verifizierungscode: " + dynamicVerificationCode);
 
-        // Log the generated verification code
-        logger.logEvent("N/A", "Verification Code", "Generated verification code: " + dynamicVerificationCode);
+        // Protokollieren Sie den generierten Verifizierungscode
+        logger.logEvent("N/A", "Verifizierungscode", "Generierter Verifizierungscode: " + dynamicVerificationCode);
 
-        System.out.print("Enter verification code: ");
+        System.out.print("Verifizierungscode eingeben: ");
         String enteredCode = scanner.nextLine();
 
         if (mfaProvider.verifyCode(enteredCode)) {
             networkMonitor.login("admin", "password", enteredCode);
-            logger.logEvent("N/A", "Login Attempt", "Login attempt for user: admin");
+            logger.logEvent("N/A", "Login-Versuch", "Login-Versuch für Benutzer: admin");
 
-            // Demonstrate the creation of network segments and restricted access between them
+            // Demonstrieren Sie die Erstellung von Netzwerksegmenten und den eingeschränkten Zugriff zwischen ihnen
             networkMonitor.defineSegment("Segment1");
             networkMonitor.defineSegment("Segment2");
             networkMonitor.assignDeviceToSegment("Segment1", "192.168.1.1");
             networkMonitor.assignDeviceToSegment("Segment2", "192.168.2.1");
             networkMonitor.restrictAccessBetweenSegments("Segment1", "Segment2");
 
-            // Authorization check
+            // Autorisierungsüberprüfung
             if (networkMonitor.isUserAuthorized("admin", "ACCESS_NETWORK")) {
-                System.out.println("User is authorized to access the network.");
-                logger.logEvent("N/A", "Authorization", "User is authorized to access the network.");
+                System.out.println("Benutzer ist berechtigt, auf das Netzwerk zuzugreifen.");
+                logger.logEvent("N/A", "Autorisierung", "Benutzer ist berechtigt, auf das Netzwerk zuzugreifen.");
             } else {
-                System.out.println("User is not authorized to access the network.");
-                logger.logEvent("N/A", "Authorization", "User is not authorized to access the network.");
+                System.out.println("Benutzer ist nicht berechtigt, auf das Netzwerk zuzugreifen.");
+                logger.logEvent("N/A", "Autorisierung", "Benutzer ist nicht berechtigt, auf das Netzwerk zuzugreifen.");
             }
 
-            // Encrypt data
-            byte[] data = "Sensitive data".getBytes();
+            // Daten verschlüsseln
+            byte[] data = "Sensible Daten".getBytes();
             byte[] encryptedData = networkMonitor.encryptData(data);
-            System.out.println("Data encrypted: " + new String(encryptedData));
+            System.out.println("Daten verschlüsselt: " + new String(encryptedData));
 
-            // Log access attempt
-            networkMonitor.logAccessAttempt("admin", "Network Resource", true);
+            // Protokollieren Sie den Zugriffsversuch
+            networkMonitor.logAccessAttempt("admin", "Netzwerkressource", true);
 
-            // Load attack signatures
+            // Angriffssignaturen laden
             networkMonitor.loadSignatures();
 
-            // Demonstrate port scanning detection
+            // Demonstrieren Sie die Erkennung von Port-Scans
             networkMonitor.detectPortScanning("192.168.1.1", 8080);
 
-            // Demonstrate suspicious content detection
+            // Demonstrieren Sie die Erkennung verdächtiger Inhalte
             networkMonitor.scanMessageForKeywords("attack", "192.168.1.1");
 
-            // Demonstrate signature-based attack detection
+            // Demonstrieren Sie die signaturbasierte Angriffserkennung
             networkMonitor.detectSignatureBasedAttack("attack_signature", "192.168.1.1");
 
-            // Demonstrate DoS attack detection
+            // Demonstrieren Sie die Erkennung von DoS-Angriffen
             networkMonitor.detectDoSAttack("192.168.1.1");
         } else {
-            System.out.println("Invalid verification code.");
+            System.out.println("Ungültiger Verifizierungscode.");
         }
     }
 
     private static String generateDynamicVerificationCode() {
-        // Generate a random 6-digit verification code
+        // Generieren Sie einen zufälligen 6-stelligen Verifizierungscode
         int code = (int) (Math.random() * 900000) + 100000;
         return String.valueOf(code);
     }
