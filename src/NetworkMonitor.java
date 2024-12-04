@@ -368,6 +368,9 @@ public class NetworkMonitor {
                 }
 
                 socket.close();
+            } catch (SSLHandshakeException ex) {
+                System.out.println("SSLHandshakeException: " + ex.getMessage());
+                logger.logEvent("N/A", "SSLHandshakeException", "SSLHandshakeException: " + ex.getMessage());
             } catch (IOException ex) {
                 System.out.println("Server-Ausnahme: " + ex.getMessage());
                 ex.printStackTrace();
