@@ -34,11 +34,6 @@ Dieses Projekt implementiert verschiedene Funktionen zur Netzwerksicherheit, ein
    - Führen Sie die Datei `src/Application.java` aus.
    - Überprüfen Sie die Datei `logs/network_events.log`, um sicherzustellen, dass die Zugriffsversuche korrekt protokolliert wurden.
 
-5. **Port-Scan-Erkennung**:
-   - Öffnen Sie die Datei `src/NetworkMonitor.java` in Ihrer IDE oder Ihrem Texteditor.
-   - Führen Sie die Datei `src/NetworkMonitor.java` aus.
-   - Simulieren Sie Port-Scans von verschiedenen IP-Adressen, indem Sie mehrere Verbindungen zu verschiedenen Ports auf dem Server herstellen.
-   - Überprüfen Sie die Konsolenausgabe sowie die Protokolldatei `logs/network_events.log`, um sicherzustellen, dass die Port-Scans erkannt wurden.
 
 6. **Überprüfung auf verdächtige Inhalte**:
    - Öffnen Sie die Datei `src/NetworkMonitor.java` in Ihrer IDE oder Ihrem Texteditor.
