@@ -26,6 +26,17 @@ public class NetworkMonitor {
     private final Map<String, Set<String>> userRoles = new HashMap<>();
     private final Map<String, Set<String>> rolePermissions = new HashMap<>();
 
+    public NetworkMonitor() {
+        // Initialize roles and permissions
+        Set<String> adminRoles = new HashSet<>();
+        adminRoles.add("ADMIN");
+        userRoles.put("admin", adminRoles);
+
+        Set<String> adminPermissions = new HashSet<>();
+        adminPermissions.add("ACCESS_NETWORK");
+        rolePermissions.put("ADMIN", adminPermissions);
+    }
+
     public void login(String username, String password, String verificationCode) {
         mfaProvider.sendVerificationCode(username, verificationCode);
         if (isUsernameAndPasswordValid(username, password)) {
