@@ -10,22 +10,22 @@ public class TestClient {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
 
-        System.out.print("Enter server address: ");
+        System.out.print("Serveradresse eingeben: ");
         String serverAddress = scanner.nextLine();
 
-        System.out.print("Enter server port: ");
+        System.out.print("Serverport eingeben: ");
         int serverPort = scanner.nextInt();
-        scanner.nextLine(); // Consume newline
+        scanner.nextLine(); // Zeilenumbruch konsumieren
 
-        System.out.print("Enter message to send: ");
+        System.out.print("Nachricht zum Senden eingeben: ");
         String message = scanner.nextLine();
 
-        System.out.println("Debug: Server address entered: " + serverAddress);
-        System.out.println("Debug: Server port entered: " + serverPort);
-        System.out.println("Debug: Message to send: " + message);
+        System.out.println("Debug: Eingegebene Serveradresse: " + serverAddress);
+        System.out.println("Debug: Eingegebener Serverport: " + serverPort);
+        System.out.println("Debug: Nachricht zum Senden: " + message);
 
         try {
-            // Create a trust manager that does not validate certificate chains
+            // Erstellen Sie einen Trust-Manager, der Zertifikatsketten nicht validiert
             TrustManager[] trustAllCerts = new TrustManager[] {
                 new X509TrustManager() {
                     public X509Certificate[] getAcceptedIssuers() {
@@ -38,40 +38,40 @@ public class TestClient {
                 }
             };
 
-            // Install the all-trusting trust manager
+            // Installieren Sie den all-vertrauenswürdigen Trust-Manager
             SSLContext sc = SSLContext.getInstance("SSL");
             sc.init(null, trustAllCerts, new SecureRandom());
 
-            // Create an SSLSocketFactory that uses our all-trusting manager
+            // Erstellen Sie eine SSLSocketFactory, die unseren all-vertrauenswürdigen Manager verwendet
             SSLSocketFactory sslSocketFactory = sc.getSocketFactory();
             SSLSocket socket = (SSLSocket) sslSocketFactory.createSocket(serverAddress, serverPort);
             String[] supportedCipherSuites = socket.getSupportedCipherSuites();
             socket.setEnabledCipherSuites(supportedCipherSuites);
 
-            // Specify the same cipher suites as the server
+            // Geben Sie die gleichen Cipher-Suites wie der Server an
             socket.setEnabledCipherSuites(socket.getSupportedCipherSuites());
 
             PrintWriter writer = new PrintWriter(socket.getOutputStream(), true);
             writer.println(message);
 
-            System.out.println("Debug: Message sent to server: " + message);
+            System.out.println("Debug: Nachricht an den Server gesendet: " + message);
 
-            // Log access attempt
+            // Protokollieren Sie den Zugriffsversuch
             Logger logger = new Logger();
-            logger.logAccessAttempt("testUser", "Network Resource", true);
+            logger.logAccessAttempt("testUser", "Netzwerkressource", true);
 
-            // Encrypt data
+            // Daten verschlüsseln
             NetworkMonitor networkMonitor = new NetworkMonitor();
-            byte[] data = "Sensitive data".getBytes();
+            byte[] data = "Sensible Daten".getBytes();
             byte[] encryptedData = networkMonitor.encryptData(data);
-            System.out.println("Data encrypted: " + new String(encryptedData));
+            System.out.println("Daten verschlüsselt: " + new String(encryptedData));
 
-            // Simulate port scans
+            // Port-Scans simulieren
             simulatePortScans(serverAddress, serverPort);
 
             socket.close();
         } catch (Exception ex) {
-            System.out.println("Client exception: " + ex.getMessage());
+            System.out.println("Client-Ausnahme: " + ex.getMessage());
             ex.printStackTrace();
         }
     }
@@ -87,9 +87,9 @@ public class TestClient {
                 SSLSocketFactory sslSocketFactory = (SSLSocketFactory) SSLSocketFactory.getDefault();
                 SSLSocket socket = (SSLSocket) sslSocketFactory.createSocket(serverAddress, port);
                 socket.close();
-                System.out.println("Port " + port + " is open.");
+                System.out.println("Port " + port + " ist offen.");
             } catch (IOException e) {
-                System.out.println("Port " + port + " is closed.");
+                System.out.println("Port " + port + " ist geschlossen.");
             }
         }
     }
