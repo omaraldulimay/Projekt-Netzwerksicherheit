@@ -5,6 +5,7 @@ public class MFAProvider {
         this.storedCode = verificationCode;
         // In a real-world application, you would integrate with an SMS or email service to send the verification code
         System.out.println("A verification code has been sent to the user: " + username);
+        System.out.println("Generated verification code: " + verificationCode);
     }
 
     public boolean verifyCode(String enteredCode) {

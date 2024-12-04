@@ -27,7 +27,7 @@ public class NetworkMonitor {
     private final Map<String, Set<String>> rolePermissions = new HashMap<>();
 
     public void login(String username, String password, String verificationCode) {
-        mfaProvider.sendVerificationCode(username);
+        mfaProvider.sendVerificationCode(username, verificationCode);
         if (isUsernameAndPasswordValid(username, password)) {
             if (mfaProvider.verifyCode(verificationCode)) {
                 if (isUserAuthorized(username, "ACCESS_NETWORK")) {
