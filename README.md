@@ -38,19 +38,13 @@ Dieses Projekt implementiert verschiedene Funktionen zur Netzwerksicherheit, ein
    - Öffnen Sie die Datei `src/NetworkMonitor.java` in Ihrer IDE oder Ihrem Texteditor.
    - Führen Sie die Datei `src/NetworkMonitor.java` aus.
    - Simulieren Sie Port-Scans von verschiedenen IP-Adressen, indem Sie mehrere Verbindungen zu verschiedenen Ports auf dem Server herstellen.
-   - Überprüfen Sie die Konsolenausgabe sowie die Protokolldatei `logs/network_events.log`, um sicherzustellen, dass die Port-Scans erkannt wurden.
+   - Überprüfen Sie die Konsolenausgabe sowie die Protokolldatei `logs/network_events.log`, um sicherzustellen, dass die Port-Scans erkannt wurden.(Anleitung:Seiten Ende)
 
 6. **Überprüfung auf verdächtige Inhalte**:
    - Öffnen Sie die Datei `src/NetworkMonitor.java` in Ihrer IDE oder Ihrem Texteditor.
    - Führen Sie die Datei `src/NetworkMonitor.java` aus.
    - Senden Sie Nachrichten mit verdächtigen Inhalten (z.B. "attack", "hack", "malware") an den Server.
    - Überprüfen Sie die Konsolenausgabe sowie die Protokolldatei `logs/network_events.log`, um sicherzustellen, dass die verdächtigen Inhalte erkannt wurden.
-
-7. **Signaturbasierte Angriffserkennung**:
-   - Öffnen Sie die Datei `src/NetworkMonitor.java` in Ihrer IDE oder Ihrem Texteditor.
-   - Führen Sie die Datei `src/NetworkMonitor.java` aus.
-   - Senden Sie Nachrichten, die Angriffssignaturen enthalten (z.B. Inhalte aus der Datei `src/attack_signatures.txt`), an den Server.
-   - Überprüfen Sie die Konsolenausgabe sowie die Protokolldatei `logs/network_events.log`, um sicherzustellen, dass die signaturbasierten Angriffe erkannt wurden.
 
 8. **DoS-Angriffserkennung**:
    - Öffnen Sie die Datei `src/NetworkMonitor.java` in Ihrer IDE oder Ihrem Texteditor.
