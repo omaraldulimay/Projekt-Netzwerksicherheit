@@ -21,6 +21,12 @@ public class Application {
         String dynamicVerificationCode = generateDynamicVerificationCode();
         mfaProvider.sendVerificationCode("admin", dynamicVerificationCode);
 
+        // Display the generated verification code to the user
+        System.out.println("Generated verification code: " + dynamicVerificationCode);
+
+        // Log the generated verification code
+        logger.logEvent("N/A", "Verification Code", "Generated verification code: " + dynamicVerificationCode);
+
         System.out.print("Enter verification code: ");
         String enteredCode = scanner.nextLine();
 
