@@ -69,6 +69,12 @@ Dieses Projekt implementiert verschiedene Funktionen zur Netzwerksicherheit, ein
     - Geben Sie den dynamischen Verifizierungscode ein, der an den Benutzer "admin" gesendet wurde.
     - Überprüfen Sie die Konsolenausgabe, um sicherzustellen, dass die MFA korrekt funktioniert und der Benutzer erfolgreich authentifiziert wird.
 
+11. **Überprüfung der Protokolldatei für verdächtige Inhalte**:
+    - Öffnen Sie die Datei `src/TestClient.java` in Ihrer IDE oder Ihrem Texteditor.
+    - Führen Sie die Datei `src/TestClient.java` aus.
+    - Senden Sie die Nachricht "attack" an den Server.
+    - Überprüfen Sie die Datei `logs/network_events.log`, um sicherzustellen, dass die Nachricht "attack" protokolliert wurde.
+    
 ## Simulieren von Port-Scans
 
 Um Port-Scans zu simulieren, können Sie die Datei `src/TestClient.java` verwenden. Diese Datei erstellt mehrere Verbindungen zu verschiedenen Ports von verschiedenen IP-Adressen. Hier ist ein Beispielcode, den Sie in `src/TestClient.java` einfügen können:

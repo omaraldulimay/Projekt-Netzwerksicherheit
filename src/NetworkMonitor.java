@@ -105,7 +105,7 @@ public class NetworkMonitor {
         for (String keyword : SUSPICIOUS_CONTENT_KEYWORDS) {
             if (message.toLowerCase().contains(keyword)) {
                 System.out.println("Suspicious packet content detected from IP: " + clientIP);
-                logger.logEvent(clientIP, "Suspicious Content", "Suspicious packet content detected");
+                logger.logEvent(clientIP, "Suspicious Content", "Suspicious packet content detected: " + message);
                 blockSuspiciousIP(clientIP);
                 break;
             }
