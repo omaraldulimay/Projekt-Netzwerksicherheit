@@ -17,7 +17,9 @@ public class Application {
             logsDir.mkdirs();
         }
 
-        mfaProvider.sendVerificationCode("admin");
+        // Generate a dynamic verification code
+        String dynamicVerificationCode = generateDynamicVerificationCode();
+        mfaProvider.sendVerificationCode("admin", dynamicVerificationCode);
 
         System.out.print("Enter verification code: ");
         String enteredCode = scanner.nextLine();
@@ -67,5 +69,11 @@ public class Application {
         } else {
             System.out.println("Invalid verification code.");
         }
+    }
+
+    private static String generateDynamicVerificationCode() {
+        // Generate a random 6-digit verification code
+        int code = (int) (Math.random() * 900000) + 100000;
+        return String.valueOf(code);
     }
 }

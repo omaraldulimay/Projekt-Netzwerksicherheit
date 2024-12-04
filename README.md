@@ -34,6 +34,11 @@ Dieses Projekt implementiert verschiedene Funktionen zur Netzwerksicherheit, ein
    - Führen Sie die Datei `src/Application.java` aus.
    - Überprüfen Sie die Datei `logs/network_events.log`, um sicherzustellen, dass die Zugriffsversuche korrekt protokolliert wurden.
 
+5. **Port-Scan-Erkennung**:
+   - Öffnen Sie die Datei `src/NetworkMonitor.java` in Ihrer IDE oder Ihrem Texteditor.
+   - Führen Sie die Datei `src/NetworkMonitor.java` aus.
+   - Simulieren Sie Port-Scans von verschiedenen IP-Adressen, indem Sie mehrere Verbindungen zu verschiedenen Ports auf dem Server herstellen.
+   - Überprüfen Sie die Konsolenausgabe sowie die Protokolldatei `logs/network_events.log`, um sicherzustellen, dass die Port-Scans erkannt wurden.
 
 6. **Überprüfung auf verdächtige Inhalte**:
    - Öffnen Sie die Datei `src/NetworkMonitor.java` in Ihrer IDE oder Ihrem Texteditor.
@@ -61,7 +66,7 @@ Dieses Projekt implementiert verschiedene Funktionen zur Netzwerksicherheit, ein
 10. **Multi-Faktor-Authentifizierung (MFA) testen**:
     - Öffnen Sie die Datei `src/Application.java` in Ihrer IDE oder Ihrem Texteditor.
     - Führen Sie die Datei `src/Application.java` aus.
-    - Geben Sie den Verifizierungscode "123456" ein, wenn Sie dazu aufgefordert werden.
+    - Geben Sie den dynamischen Verifizierungscode ein, der an den Benutzer "admin" gesendet wurde.
     - Überprüfen Sie die Konsolenausgabe, um sicherzustellen, dass die MFA korrekt funktioniert und der Benutzer erfolgreich authentifiziert wird.
 
 ## Simulieren von Port-Scans

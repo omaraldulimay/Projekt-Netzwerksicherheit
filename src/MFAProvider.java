@@ -1,7 +1,8 @@
 public class MFAProvider {
-    private String storedCode = "123456"; // This is a hardcoded verification code for simplicity
+    private String storedCode; // This will store the dynamic verification code
 
-    public void sendVerificationCode(String username) {
+    public void sendVerificationCode(String username, String verificationCode) {
+        this.storedCode = verificationCode;
         // In a real-world application, you would integrate with an SMS or email service to send the verification code
         System.out.println("A verification code has been sent to the user: " + username);
     }
