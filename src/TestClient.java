@@ -66,10 +66,31 @@ public class TestClient {
             byte[] encryptedData = networkMonitor.encryptData(data);
             System.out.println("Data encrypted: " + new String(encryptedData));
 
+            // Simulate port scans
+            simulatePortScans(serverAddress, serverPort);
+
             socket.close();
         } catch (Exception ex) {
             System.out.println("Client exception: " + ex.getMessage());
             ex.printStackTrace();
+        }
+    }
+
+    private static void simulatePortScans(String serverAddress, int serverPort) {
+        List<Integer> portsToScan = new ArrayList<>();
+        for (int i = 1; i <= 1024; i++) {
+            portsToScan.add(i);
+        }
+
+        for (int port : portsToScan) {
+            try {
+                SSLSocketFactory sslSocketFactory = (SSLSocketFactory) SSLSocketFactory.getDefault();
+                SSLSocket socket = (SSLSocket) sslSocketFactory.createSocket(serverAddress, port);
+                socket.close();
+                System.out.println("Port " + port + " is open.");
+            } catch (IOException e) {
+                System.out.println("Port " + port + " is closed.");
+            }
         }
     }
 }
