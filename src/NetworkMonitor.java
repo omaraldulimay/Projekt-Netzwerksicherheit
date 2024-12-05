@@ -5,7 +5,7 @@ import java.net.BindException;
 
 public class NetworkMonitor {
     private static final int MAX_CONNECTIONS_PER_IP = 50;
-    private static final int MAX_REQUESTS_PER_MINute = 1000;
+    private static final int MAX_REQUESTS_PER_MINUTE = 1000;
     private static final List<String> SUSPICIOUS_CONTENT_KEYWORDS = Arrays.asList("attack", "hack", "malware");
 
     private static final Map<String, Integer> connectionCounts = new HashMap<>();
@@ -115,7 +115,7 @@ public class NetworkMonitor {
     public void loadSignatures() {
         String path = "src/attack_signatures.txt";
         File file = new File(path);
-        if (!file exists()) {
+        if (!file.exists()) {
             System.out.println("Warnung: Datei mit Angriffssignaturen nicht gefunden: " + file.getPath());
             logger.logEvent("N/A", "Warnung", "Datei mit Angriffssignaturen nicht gefunden: " + file.getPath());
             return;
@@ -147,7 +147,7 @@ public class NetworkMonitor {
         if (requestTimestamps.get(clientIP) == null) {
             requestTimestamps.put(clientIP, new LinkedList<>());
         }
-        if (requestTimestamps.get(clientIP).size() > MAX_REQUESTS_PER_MINute) {
+        if (requestTimestamps.get(clientIP).size() > MAX_REQUESTS_PER_MINUTE) {
             System.out.println("Möglicher DoS-Angriff von IP erkannt: " + clientIP);
             logger.logEvent(clientIP, "DoS Attack", "Möglicher DoS-Angriff erkannt");
             blockSuspiciousIP(clientIP);
@@ -293,12 +293,12 @@ public class NetworkMonitor {
 
                 // Entfernen Sie die Zeitstempel, die älter als eine Minute sind
                 LinkedList<Long> timestamps = requestTimestamps.get(clientIP);
-                if (timestamps != null && nicht leer && timestamps.peek() < System.currentTimeMillis() - 60000) {
+                if (timestamps != null && !timestamps.isEmpty() && timestamps.peek() < System.currentTimeMillis() - 60000) {
                     timestamps.remove();
                 }
 
                 // Wenn die Anzahl der Anfragen pro Minute für diese IP das Limit überschreitet, geben Sie eine Warnung aus
-                if (requestTimestamps.get(clientIP).size() > MAX_REQUESTS_PER MINute) {
+                if (requestTimestamps.get(clientIP).size() > MAX_REQUESTS_PER_MINUTE) {
                     System.out.println("Möglicher DoS-Angriff von IP erkannt: " + clientIP);
                     logger.logEvent(clientIP, "DoS Attack", "Möglicher DoS-Angriff erkannt");
                     blockSuspiciousIP(clientIP);
