@@ -1,5 +1,10 @@
 import java.util.Scanner;
+import java.util.Set;
+import java.util.Map;
 import java.io.File;
+import src.Logger;
+import src.NetworkMonitor;
+import src.MFAProvider;
 
 public class Application {
     private static final Logger logger = new Logger();
@@ -9,8 +14,7 @@ public class Application {
         MFAProvider mfaProvider = new MFAProvider();
         Scanner scanner = new Scanner(System.in);
 
-        // Überprüfen Sie das Vorhandensein des Logs-Verzeichnisses und erstellen Sie
-        // es, falls es nicht existiert
+        // Überprüfen Sie das Vorhandensein des Logs-Verzeichnisses und erstellen Sie es, falls es nicht existiert
         File logsDir = new File("logs");
         if (!logsDir.exists()) {
             logsDir.mkdirs();
@@ -33,8 +37,7 @@ public class Application {
             networkMonitor.login("admin", "password", enteredCode);
             logger.logEvent("N/A", "Login-Versuch", "Login-Versuch für Benutzer: admin");
 
-            // Demonstrieren Sie die Erstellung von Netzwerksegmenten und den
-            // eingeschränkten Zugriff zwischen ihnen
+            // Demonstrieren Sie die Erstellung von Netzwerksegmenten und den eingeschränkten Zugriff zwischen ihnen
             networkMonitor.defineSegment("Segment1");
             networkMonitor.defineSegment("Segment2");
             networkMonitor.assignDeviceToSegment("Segment1", "192.168.1.1");
@@ -62,16 +65,16 @@ public class Application {
             networkMonitor.loadSignatures();
 
             // Demonstrieren Sie die Erkennung von Port-Scans
-            NetworkMonitor.detectPortScanning("192.168.1.1", 8080);
+            networkMonitor.detectPortScanning("192.168.1.1", 8080);
 
             // Demonstrieren Sie die Erkennung verdächtiger Inhalte
-            NetworkMonitor.scanMessageForKeywords("attack", "192.168.1.1");
+            networkMonitor.scanMessageForKeywords("attack", "192.168.1.1");
 
             // Demonstrieren Sie die signaturbasierte Angriffserkennung
-            NetworkMonitor.detectSignatureBasedAttack("attack_signature", "192.168.1.1");
+            networkMonitor.detectSignatureBasedAttack("attack_signature", "192.168.1.1");
 
             // Demonstrieren Sie die Erkennung von DoS-Angriffen
-            NetworkMonitor.detectDoSAttack("192.168.1.1");
+            networkMonitor.detectDoSAttack("192.168.1.1");
         } else {
             System.out.println("Ungültiger Verifizierungscode.");
         }

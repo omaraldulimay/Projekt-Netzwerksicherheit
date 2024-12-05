@@ -58,3 +58,13 @@ Dieses Projekt implementiert verschiedene Funktionen zur Netzwerksicherheit, ein
     - Führen Sie die Datei `src/Application.java` aus.
     - Geben Sie den dynamischen Verifizierungscode ein, der an den Benutzer "admin" gesendet wurde.
     - Überprüfen Sie die Konsolenausgabe, um sicherzustellen, dass die MFA korrekt funktioniert und der Benutzer erfolgreich authentifiziert wird.
+
+## Java Extension für Visual Studio Code (VSC)
+
+Um die Java-Dateien in Visual Studio Code (VSC) auszuführen und zu testen, benötigen Sie die Java Extension. Folgen Sie diesen Schritten, um die Java Extension in VSC zu installieren:
+
+1. Öffnen Sie Visual Studio Code.
+2. Klicken Sie auf das Erweiterungssymbol in der Seitenleiste oder drücken Sie `Ctrl+Shift+X`, um den Erweiterungsbereich zu öffnen.
+3. Geben Sie "Java Extension Pack" in das Suchfeld ein.
+4. Klicken Sie auf "Installieren" neben dem "Java Extension Pack" von Microsoft.
+5. Nach der Installation der Erweiterung können Sie Ihre Java-Dateien in VSC ausführen und testen.
