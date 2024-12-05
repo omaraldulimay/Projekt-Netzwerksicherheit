@@ -2,13 +2,9 @@ import java.util.Scanner;
 import java.util.Set;
 import java.util.Map;
 import java.io.File;
-import java.util.Scanner;
-import java.util.Set;
-import java.util.Map;
-import java.io.File;
-import Logger;
-import NetworkMonitor;
-import MFAProvider;
+import com.example.Logger;
+import com.example.NetworkMonitor;
+import com.example.MFAProvider;
 
 public class Application {
     private static final Logger logger = new Logger();
