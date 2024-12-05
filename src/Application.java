@@ -1,10 +1,5 @@
 import java.util.Scanner;
-import java.util.Set;
-import java.util.Map;
 import java.io.File;
-import src.Logger;
-import src.NetworkMonitor;
-import src.MFAProvider;
 
 public class Application {
     private static final Logger logger = new Logger();
